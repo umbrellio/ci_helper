@@ -2,11 +2,19 @@
 
 require "bundler/setup"
 require "simplecov"
+require "simplecov-lcov"
 
 require "bundler/setup"
 
+SimpleCov::Formatter::LcovFormatter.config do |c|
+  c.report_with_single_file = true
+  c.lcov_file_name = "lcov.info"
+  c.output_directory = "coverage"
+end
+
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter,
+  SimpleCov::Formatter::LcovFormatter,
 ])
 
 SimpleCov.start

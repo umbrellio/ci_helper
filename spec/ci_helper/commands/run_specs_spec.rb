@@ -7,7 +7,7 @@ describe CIHelper::Commands::RunSpecs do
 
   before { allow(Pathname).to receive(:pwd).and_return(mocked_pathname) }
 
-  let(:options) { Hash[] }
+  let(:options) { Hash[split_resultset: "true", with_database: "true"] }
 
   let(:mocked_pathname) do
     instance_double(Pathname).tap do |pathname|
@@ -38,7 +38,9 @@ describe CIHelper::Commands::RunSpecs do
   end
 
   context "with indexes in options" do
-    let(:options) { Hash[node_index: "2", node_total: "2"] }
+    let(:options) do
+      { split_resultset: "true", with_database: "true", node_index: "2", node_total: "2" }
+    end
 
     let(:expected_commands) do
       [
@@ -51,6 +53,18 @@ describe CIHelper::Commands::RunSpecs do
     it "splits files properly" do
       expect(command).to eq(0)
       expect(popen_executed_commands.size).to eq(3)
+      expect(popen_executed_commands).to eq(expected_commands)
+    end
+  end
+
+  context "without database and resultset splitting" do
+    let(:options) { Hash[] }
+
+    let(:expected_commands) { ["bundle exec rspec cool_path_1 cool_path_0"] }
+
+    it "performs proper commands" do
+      expect(command).to eq(0)
+      expect(popen_executed_commands.size).to eq(1)
       expect(popen_executed_commands).to eq(expected_commands)
     end
   end

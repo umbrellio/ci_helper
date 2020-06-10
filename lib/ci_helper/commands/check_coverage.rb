@@ -19,7 +19,7 @@ module CIHelper
       def process_results
         files = path.glob(result_set_mask)
         files.sort.map do |file_result|
-          process_stdout.puts(pastel.blue("Processing #{file_result}"))
+          process_stdout.puts(ColorizedString["Processing #{file_result}"].blue)
           data = JSON.parse(file_result.read)
           SimpleCov::Result.from_hash(data)
         end
