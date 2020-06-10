@@ -8,7 +8,6 @@ shared_context "commands context" do
     end
 
     allow(CIHelper::Commands::BaseCommand).to receive(:process_stdout).and_return(stdout_io)
-    allow(Pathname).to receive(:pwd).and_return(Pathname(""))
   end
 
   let(:popen_thread) { instance_double(Thread, value: process_value) }

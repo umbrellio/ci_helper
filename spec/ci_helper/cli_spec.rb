@@ -34,11 +34,15 @@ describe CIHelper::CLI do
     end
   end
 
-  context "with flag without value" do
-    let(:args) { [command_class_name, "--kek"] }
+  context "with last flag without value" do
+    let(:args) { [command_class_name, "--ignored-advisories"] }
 
-    it "raises error" do
-      expect { described_class.run!(args) }.to raise_error("Not valid options")
+    let(:expected_command) { "bundle exec bundler-audit check --update" }
+
+    it "executes audit without ignored advisories" do
+      expect(client_response).to eq(0)
+      expect(popen_executed_commands.size).to eq(1)
+      expect(popen_executed_commands.first).to eq(expected_command)
     end
   end
 
@@ -49,6 +53,16 @@ describe CIHelper::CLI do
     end
 
     it "raises error with bad exit code" do
+      expect { described_class.run!(args) }.to raise_error(raised_error_message)
+    end
+  end
+
+  context "with not existed command" do
+    let(:args) { ["BadCommand"] }
+
+    let(:raised_error_message) { "Can't find command with path: ci_helper/commands/bad_command" }
+
+    it "raises error" do
       expect { described_class.run!(args) }.to raise_error(raised_error_message)
     end
   end
