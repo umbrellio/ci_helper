@@ -6,8 +6,10 @@ module CIHelper
       def call
         return if job_files.empty?
 
-        create_and_migrate_database!
+        create_and_migrate_database! if with_database?
         execute("bundle exec rspec #{Shellwords.join(job_files)}")
+        return 0 unless split_resultset?
+
         execute("mv coverage/.resultset.json coverage/resultset.#{job_index}.json")
       end
 
@@ -32,6 +34,14 @@ module CIHelper
 
       def job_count
         @job_count ||= options[:node_total]&.to_i || 1
+      end
+
+      def with_database?
+        options[:with_database] == "true"
+      end
+
+      def split_resultset?
+        options[:split_resultset] == "true"
       end
     end
   end

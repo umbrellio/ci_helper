@@ -29,7 +29,7 @@ module CIHelper
       def execute(*commands)
         command = commands.join(" && ")
 
-        process_stdout.puts(pastel.green.bold("> ") + pastel.blue.bold(command))
+        process_stdout.puts(ColorizedString["> "].green.bold + ColorizedString[command].blue.bold)
 
         Open3.popen2e(command) do |_stdin, stdout, thread|
           stdout.each_char { |char| process_stdout.print(char) }
@@ -60,10 +60,6 @@ module CIHelper
 
       def process_stdout
         self.class.process_stdout
-      end
-
-      def pastel
-        @pastel ||= Pastel.new
       end
     end
   end

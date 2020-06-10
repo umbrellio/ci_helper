@@ -3,7 +3,7 @@
 require_relative "lib/ci_helper/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "CIHelper"
+  spec.name          = "ci-helper"
   spec.version       = CIHelper::VERSION
   spec.authors       = ["AnotherRegularDude"]
   spec.email         = ["vanyaz158@gmail.com"]
@@ -26,12 +26,14 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "pastel", "~> 0.7"
+  spec.add_runtime_dependency "colorize", "~> 0.8"
 
   spec.add_development_dependency "bundler"
+  spec.add_development_dependency "bundler-audit"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rubocop-config-umbrellio"
   spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "simplecov-lcov"
 end

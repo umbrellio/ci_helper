@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+require "colorized_string"
 require "open3"
-require "pastel"
 require "pathname"
 require "shellwords"
 

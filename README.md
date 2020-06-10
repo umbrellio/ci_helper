@@ -1,4 +1,4 @@
-# CIHelper
+# CIHelper   [![Actions Status](https://github.com/umbrellio/ci_helper/workflows/Ruby/badge.svg)](https://github.com/umbrellio/ci_helper/actions) [![Coverage Status](https://coveralls.io/repos/github/umbrellio/ci_helper/badge.svg?branch=master)](https://coveralls.io/github/umbrellio/ci_helper?branch=master)
 
 Documentation about gem here.
 
@@ -24,7 +24,7 @@ TODO: Write usage instructions here
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/ci_helper.
+Bug reports and pull requests are welcome on GitHub at https://github.com/umbrellio/ci_helper.
 
 
 ## License
