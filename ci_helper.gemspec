@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = "Continuous Integration helpers for Ruby"
   spec.description   = "CIHelper is a gem with Continuous Integration helpers for Ruby"
-  spec.homepage      = "https://github.com/umbrellio"
+  spec.homepage      = "https://github.com/umbrellio/ci_helper"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.7.0")
 

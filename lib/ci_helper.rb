@@ -10,6 +10,7 @@ require "singleton"
 
 require "ci_helper/cli"
 require "ci_helper/commands"
+require "ci_helper/tools/colorize"
 require "ci_helper/tools/inflector"
 require "ci_helper/version"
 

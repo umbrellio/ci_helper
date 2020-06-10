@@ -29,7 +29,7 @@ module CIHelper
       def execute(*commands)
         command = commands.join(" && ")
 
-        process_stdout.puts(ColorizedString["> "].green.bold + ColorizedString[command].blue.bold)
+        process_stdout.puts(Tools::Colorize.command(command))
 
         Open3.popen2e(command) do |_stdin, stdout, thread|
           stdout.each_char { |char| process_stdout.print(char) }
