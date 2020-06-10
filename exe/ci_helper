@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift("#{__dir__}/../lib")
+
+require "ci_helper"
+
+begin
+  exit CIHelper::CLI.run!(ARGV)
+rescue CIHelper::CLI::Error => error
+  abort error.message
+end

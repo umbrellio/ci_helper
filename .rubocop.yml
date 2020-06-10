@@ -1,0 +1,12 @@
+inherit_gem:
+  rubocop-config-umbrellio: lib/rubocop.yml
+
+AllCops:
+  DisplayCopNames: true
+  TargetRubyVersion: 2.5
+
+Naming/MethodParameterName:
+  AllowedNames: ["x", "y", "z"]
+
+RSpec/EmptyLineAfterHook:
+  Enabled: false
