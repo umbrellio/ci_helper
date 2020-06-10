@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "ci_helper/commands/run_specs"
+
 describe CIHelper::Commands::RunSpecs do
   include_context "commands context"
 

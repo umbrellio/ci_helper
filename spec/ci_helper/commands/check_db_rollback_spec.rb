@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "ci_helper/commands/check_db_rollback"
+
 describe CIHelper::Commands::CheckDBRollback do
   include_context "commands context"
 

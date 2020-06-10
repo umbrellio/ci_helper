@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "ci_helper/commands/bundler_audit"
+
 describe CIHelper::Commands::BundlerAudit do
   include_context "commands context"
 

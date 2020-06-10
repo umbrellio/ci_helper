@@ -5,7 +5,7 @@ require_relative "lib/ci_helper/version"
 Gem::Specification.new do |spec|
   spec.name          = "ci-helper"
   spec.version       = CIHelper::VERSION
-  spec.authors       = ["AnotherRegularDude"]
+  spec.authors       = ["JustAnotherDude"]
   spec.email         = ["vanyaz158@gmail.com"]
 
   spec.summary       = "Continuous Integration helpers for Ruby"
@@ -13,8 +13,6 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/umbrellio"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.7.0")
-
-  spec.metadata["allowed_push_host"] = "Set to 'http://mygemserver.com'"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/umbrellio/ci_helper"
@@ -27,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "colorize", "~> 0.8"
+  spec.add_runtime_dependency "dry-inflector", "~> 0.2"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "bundler-audit"

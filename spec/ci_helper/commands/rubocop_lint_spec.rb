@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "ci_helper/commands/rubocop_lint"
+
 describe CIHelper::Commands::RubocopLint do
   include_context "commands context"
 
