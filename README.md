@@ -5,7 +5,7 @@
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "ci_helper", require: false
+gem "ci-helper", require: false
 ```
 
 And then execute:
@@ -65,7 +65,7 @@ begin
   CIHelper::Commands::RunSpecs.call!(with_database: "true") # returned value is exit code.
 rescue CIHelper::Commands::Error => e # Command raise error with this class if something went wrong.
   abort e.message
-rescue
+end
 ```
 
 ## Adding your own commands
@@ -95,12 +95,12 @@ end
 Then you add your gem to a Gemfile:
 ```ruby
 gem "ci-helper", require: false
-gem "cool-gem", require: false
+gem "ci-helper-plugin-gem", require: false
 ```
 
 And now, you can use your custom command with command line tool:
 ```bash
-$ ci-helper CoolCommand --cool-options -al
+$ ci-helper CoolCommand --cool-options option_value
 ```
 
 ## Contributing
@@ -111,3 +111,15 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/umbrel
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+## License
+
+Released under MIT License.
+
+## Authors
+
+Created by Ivan Chernov.
+
+<a href="https://github.com/umbrellio/">
+<img style="float: left;" src="https://umbrellio.github.io/Umbrellio/supported_by_umbrellio.svg" alt="Supported by Umbrellio" width="439" height="72">
+</a>
