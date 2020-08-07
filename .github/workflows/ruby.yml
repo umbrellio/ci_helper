@@ -33,6 +33,8 @@ jobs:
       run: bundle exec rake install
     - name: Run Linter
       run: ci-helper RubocopLint
+    - name: Check missed spec suffixes
+      run: ci-helper CheckSpecSuffixes
     - name: Run specs
       run: ci-helper RunSpecs
     - name: Audit
