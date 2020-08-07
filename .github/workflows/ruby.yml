@@ -34,7 +34,7 @@ jobs:
     - name: Run Linter
       run: ci-helper RubocopLint
     - name: Check missed spec suffixes
-      run: ci-helper CheckSpecSuffixes --extra-paths spec/ci_helper_spec.rb
+      run: ci-helper CheckSpecSuffixes --extra-paths spec/*.rb --ignored-paths spec/*_helper.rb
     - name: Run specs
       run: ci-helper RunSpecs
     - name: Audit
