@@ -9,7 +9,7 @@ describe CIHelper::Commands::BundlerAudit do
 
   let(:options) { Hash[] }
 
-  it "executes proper command and exists with success" do
+  it "executes proper command and exits with success" do
     expect(command).to eq(0)
     expect(popen_executed_commands.size).to eq(1)
     expect(popen_executed_commands.first).to eq("bundle exec bundler-audit check --update")

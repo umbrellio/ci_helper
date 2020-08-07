@@ -54,6 +54,11 @@ module CIHelper
         raise Error, message
       end
 
+      def plural_option(key)
+        return [] unless options.key?(key)
+        options[key].split(",")
+      end
+
       def path
         @path ||= Pathname.pwd
       end
