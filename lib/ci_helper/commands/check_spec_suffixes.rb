@@ -4,9 +4,8 @@ module CIHelper
   module Commands
     class CheckSpecSuffixes < BaseCommand
       def call
-        target_paths.reject { |path| path.end_with?("_spec.rb") }.tap do |paths|
-          fail!("Detected specs without _spec suffix: #{paths.join(" ")}") if paths.any?
-        end
+        paths = target_paths.reject { |path| path.end_with?("_spec.rb") }
+        fail!("Detected specs without _spec suffix: #{paths.join(" ")}") if paths.any?
         0
       end
 
