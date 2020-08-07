@@ -54,6 +54,13 @@ Accepted flags: `--node-index`, `node-total`, `with-database`, `split-resultset`
     * `--split-resultset` — if you run specs in parallel in CI,
         then you might use this flag to `true`. If this flag set to true,
         final `.resultset.json` will be renamed to `.resultset.#{node_index}.json`
+* **CheckSpecSuffixes** — checks specs in the spec subdirectories for `_spec` suffix,
+    by default ignored directories `support`, `factories` and files with `_context` suffix.
+    Accepted flags: `--extra_paths`, `--ignored_paths`.
+    * `--extra-paths [values]` - accepts additional path patterns that should be scanned,
+        delimited by coma.
+    * `--ignored-paths [values]` - accepts path patterns that should be ignored,
+        delimited by coma.
 
 ### Script
 
