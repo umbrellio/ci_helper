@@ -13,6 +13,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  FULL_COVERAGE_CHECK: true
+
 jobs:
   test-latest:
 

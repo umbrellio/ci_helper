@@ -10,3 +10,7 @@ Naming/MethodParameterName:
 
 RSpec/EmptyLineAfterHook:
   Enabled: false
+
+Naming/FileName:
+  Exclude:
+    - lib/ci-helper.rb

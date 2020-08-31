@@ -42,8 +42,9 @@ List of available commands:
 * **CheckDBDevelopment** — executes rails db commands (`db:drop`, `db:create`, `db:migrate`)
     and seeds database. Does not accept flags.
 * **CheckDBRollback** — executes rails db commands with additional command
-    `db:rollback_new_migrations`, which rollbacks migrations,
-    added in tested branch. Does not accept flags.
+    `db:rollback_new_migrations`, which rollbacks migrations, added in tested branch.
+    Does not accept flags. Gem provides this rake task, but only for `Sequel`.
+    If you want to use `ActiveRecord::Migrator`, you'll have to write rake task by your own.
 * **RubocopLint** — executes rubocop linter. Does not accept flags.
 * **RunSpecs** — executes `rspec` in project root.
 Accepted flags: `--node-index`, `node-total`, `with-database`, `split-resultset`.
@@ -61,6 +62,13 @@ Accepted flags: `--node-index`, `node-total`, `with-database`, `split-resultset`
         delimited by coma.
     * `--ignored-paths [values]` - accepts path patterns that should be ignored,
         delimited by coma.
+
+### Rake Tasks
+
+As you can see, some commands use generic rake tasks. To make tasks available in your application,
+you need to require the file `ci_helper/railtie`. Also, you can require it directly in `Gemfile`:
+`gem "ci-helper", require: "ci_helper/railtie, group: :test`.
+Or if you haven't set `require` option to `false`, rake tasks loads automatically.
 
 ### Script
 

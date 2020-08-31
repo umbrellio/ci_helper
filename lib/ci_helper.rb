@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+module CIHelper
+end
+
 require "colorized_string"
 require "delegate"
 require "dry/inflector"
@@ -14,5 +17,4 @@ require "ci_helper/tools/colorize"
 require "ci_helper/tools/inflector"
 require "ci_helper/version"
 
-module CIHelper
-end
+require "ci_helper/railtie" if defined?(Rails)
