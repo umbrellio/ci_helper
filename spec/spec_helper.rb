@@ -17,6 +17,8 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::LcovFormatter,
 ])
 
+SimpleCov.minimum_coverage(100) if ENV["FULL_COVERAGE_CHECK"]
+
 SimpleCov.start
 
 require "ci_helper"
