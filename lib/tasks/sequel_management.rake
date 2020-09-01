@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "logger"
+require "sequel/timestamp_migrator_undo_extension"
 
 class SequelManagement
   include Rake::DSL

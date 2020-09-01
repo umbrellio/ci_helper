@@ -6,6 +6,8 @@ require "simplecov-lcov"
 
 require "bundler/setup"
 
+SimpleCov.enable_coverage :branch
+
 SimpleCov::Formatter::LcovFormatter.config do |c|
   c.report_with_single_file = true
   c.lcov_file_name = "lcov.info"
