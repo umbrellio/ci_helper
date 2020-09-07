@@ -47,7 +47,7 @@ List of available commands:
     If you want to use `ActiveRecord::Migrator`, you'll have to write rake task by your own.
 * **RubocopLint** — executes rubocop linter. Does not accept flags.
 * **RunSpecs** — executes `rspec` in project root.
-Accepted flags: `--node-index`, `node-total`, `with-database`, `split-resultset`.
+    Accepted flags: `--node-index`, `node-total`, `with-database`, `split-resultset`.
     * `--node-index` — if you run specs in parallel in CI, then you might use this flag.
     * `--node-total` — if you run specs in parallel in CI, then you might use this flag.
     * `--with-database` — if you want to prepare database before executing specs,
@@ -65,7 +65,7 @@ Accepted flags: `--node-index`, `node-total`, `with-database`, `split-resultset`
 * **CheckCoverage** — checks coverage by executing `SimpleCov::collate`.
     You should set `SimpleCov::minimum_coverage` in your `spec_helper.rb` file.
     Accepted flags: `--split-resultset`.
-      * `--split-resultset` — if you execute command `RunSpecs` with `--split-resultset true`,
+    * `--split-resultset` — if you execute command `RunSpecs` with `--split-resultset true`,
         you also should set this flag to `true`. If this flag set to `true`, final coverage will be
         calculated by merging results in all files, matching the mask `coverage/resultset.*.json`.
         By default final coverage is calculated using result from `coverage/.resultset.json`.
