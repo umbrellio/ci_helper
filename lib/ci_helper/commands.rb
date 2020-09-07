@@ -8,11 +8,12 @@ module CIHelper
       class << self
         def call!(**options)
           new(**options).call
+          0
         end
 
         # :nocov:
         def process_stdout
-          @process_stdout ||= STDOUT
+          @process_stdout ||= $stdout
         end
         # :nocov:
       end

@@ -9,7 +9,7 @@ class SequelManagement
   MIGRATIONS_PATH = "db/migrate"
 
   def initialize
-    self.logger = Logger.new(STDOUT)
+    self.logger = Logger.new($stdout)
 
     define_db_task!
   end

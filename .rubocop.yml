@@ -14,3 +14,6 @@ RSpec/EmptyLineAfterHook:
 Naming/FileName:
   Exclude:
     - lib/ci-helper.rb
+
+Lint/MissingSuper:
+  Enabled: false

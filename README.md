@@ -62,6 +62,13 @@ Accepted flags: `--node-index`, `node-total`, `with-database`, `split-resultset`
         delimited by coma.
     * `--ignored-paths [values]` - accepts path patterns that should be ignored,
         delimited by coma.
+* **CheckCoverage** — checks coverage by executing `SimpleCov::collate`.
+    You should set `SimpleCov::minimum_coverage` in your `spec_helper.rb` file.
+    Accepted flags: `--split-resultset`.
+      * `--split-resultset` — if you execute command `RunSpecs` with `--split-resultset true`,
+        you also should set this flag to `true`. If this flag set to `true`, final coverage will be
+        calculated by merging results in all files, matching the mask `coverage/resultset.*.json`.
+        By default final coverage is calculated using result from `coverage/.resultset.json`.
 
 ### Rake Tasks
 

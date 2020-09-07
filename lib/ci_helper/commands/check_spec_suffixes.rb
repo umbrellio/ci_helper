@@ -6,7 +6,6 @@ module CIHelper
       def call
         paths = target_paths.reject { |path| path.end_with?("_spec.rb") }
         fail!("Detected specs without _spec suffix: #{paths.join(" ")}") if paths.any?
-        0
       end
 
       private
