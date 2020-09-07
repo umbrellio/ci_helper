@@ -5,6 +5,7 @@ module CIHelper
     class CheckCoverage < BaseCommand
       def call
         SimpleCov.collate(files)
+        0
       end
 
       private

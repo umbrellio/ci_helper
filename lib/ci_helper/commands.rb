@@ -8,7 +8,6 @@ module CIHelper
       class << self
         def call!(**options)
           new(**options).call
-          0
         end
 
         # :nocov:
