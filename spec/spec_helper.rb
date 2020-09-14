@@ -4,8 +4,7 @@ require "bundler/setup"
 require "simplecov"
 require "simplecov-lcov"
 
-require "bundler/setup"
-
+SimpleCov.enable_coverage :line
 SimpleCov.enable_coverage :branch
 
 SimpleCov::Formatter::LcovFormatter.config do |c|

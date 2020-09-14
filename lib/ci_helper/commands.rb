@@ -12,7 +12,7 @@ module CIHelper
 
         # :nocov:
         def process_stdout
-          @process_stdout ||= STDOUT
+          @process_stdout ||= $stdout
         end
         # :nocov:
       end

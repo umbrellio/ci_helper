@@ -17,4 +17,6 @@ require "ci_helper/tools/colorize"
 require "ci_helper/tools/inflector"
 require "ci_helper/version"
 
+# :nocov:
 require "ci_helper/railtie" if defined?(Rails)
+# :nocov:
