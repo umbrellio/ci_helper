@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+require "simplecov"
+
 module CIHelper
   module Commands
     class CheckCoverage < BaseCommand
       def call
-        SimpleCov.collate(files)
+        ::SimpleCov.collate(files)
         0
       end
 
