@@ -6,7 +6,7 @@ module CIHelper
   module Commands
     class CheckCoverage < BaseCommand
       def call
-        require_relative setup_file_path unless setup_file_path.nil?
+        require_relative(setup_file_path) unless setup_file_path.nil?
 
         ::SimpleCov.collate(files)
         0
