@@ -6,6 +6,8 @@ module CIHelper
   module Commands
     class CheckCoverage < BaseCommand
       def call
+        require_relative setup_file_path unless setup_file_path.nil?
+
         ::SimpleCov.collate(files)
         0
       end
@@ -20,6 +22,10 @@ module CIHelper
 
       def split_resultset?
         options[:split_resultset] == "true"
+      end
+
+      def setup_file_path
+        options[:setup_file_path]
       end
     end
   end
