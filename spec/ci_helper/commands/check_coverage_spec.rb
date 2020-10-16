@@ -46,7 +46,7 @@ describe CIHelper::Commands::CheckCoverage do
     let(:options) { Hash[setup_file_path: "relative/path/to/spec_helper"] }
 
     it "requires this file" do
-      expect(instance).to receive(:require_relative).with("relative/path/to/spec_helper")
+      expect(instance).to receive(:require).with(pathname_for_join)
       expect(command).to eq(0)
       expect(collate_args.size).to eq(1)
       expect(collate_args.first).to be_an_instance_of(Array)
@@ -61,7 +61,7 @@ describe CIHelper::Commands::CheckCoverage do
     let(:options) { Hash[] }
 
     it "doesn't require file" do
-      expect(instance).not_to receive(:require_relative)
+      expect(instance).not_to receive(:require)
       expect(command).to eq(0)
     end
   end
