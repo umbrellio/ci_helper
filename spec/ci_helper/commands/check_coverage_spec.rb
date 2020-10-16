@@ -38,4 +38,31 @@ describe CIHelper::Commands::CheckCoverage do
       expect(collate_args.first.first).to eq(pathname_for_join)
     end
   end
+
+  context "when setup file flag is passed" do
+    subject(:command) { instance.call }
+
+    let(:instance) { described_class.new(**options) }
+    let(:options) { Hash[setup_file_path: "relative/path/to/spec_helper"] }
+
+    it "requires this file" do
+      expect(instance).to receive(:require).with(pathname_for_join)
+      expect(command).to eq(0)
+      expect(collate_args.size).to eq(1)
+      expect(collate_args.first).to be_an_instance_of(Array)
+      expect(collate_args.first.first).to eq(pathname_for_join)
+    end
+  end
+
+  context "when setup file flag isn't passed" do
+    subject(:command) { instance.call }
+
+    let(:instance) { described_class.new(**options) }
+    let(:options) { Hash[] }
+
+    it "doesn't require file" do
+      expect(instance).not_to receive(:require)
+      expect(command).to eq(0)
+    end
+  end
 end
