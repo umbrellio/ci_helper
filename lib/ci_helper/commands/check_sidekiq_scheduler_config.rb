@@ -14,7 +14,7 @@ module CIHelper
       private
 
       def execute_with_rails_runner(cmd)
-        execute("bundle exec rails runner -e '#{cmd}'")
+        execute("bundle exec rails runner \"#{cmd}\"")
       end
 
       def craft_jobs_const_get_cmd

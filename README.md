@@ -70,6 +70,10 @@ List of available commands:
         By default final coverage is calculated using result from `coverage/.resultset.json`.
     * `--setup-file-path` — relative path to your `.rb` file, which setups `SimpleCov`.
       Usually it is `spec_helper.rb`.
+* **CheckSidekiqSchedulerConfig** — checks `sidekiq_scheduler` config by trying to resolve jobs constants.
+    Accepted flags: `--config-path`
+    * `--config-path` — relative path to your config yaml file with schedule.
+      Usually it is `config/sidekiq_scheduler.yml`.
 
 ### Rake Tasks
 
