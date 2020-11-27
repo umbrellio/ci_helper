@@ -6,6 +6,8 @@ module CIHelper
   module Commands
     class CheckSidekiqSchedulerConfig < BaseCommand
       def call
+        return 0 if job_constants.empty?
+
         cmd = craft_jobs_const_get_cmd
         execute_with_rails_runner(cmd)
         0
@@ -22,7 +24,7 @@ module CIHelper
       end
 
       def job_constants
-        config.values.flat_map(&:keys).uniq!
+        @job_constants ||= config.values.reject(&:nil?).flat_map(&:keys).uniq
       end
 
       def config

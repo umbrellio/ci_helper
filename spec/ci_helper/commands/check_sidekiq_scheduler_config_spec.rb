@@ -31,12 +31,29 @@ describe CIHelper::Commands::CheckSidekiqSchedulerConfig do
   let(:options) { Hash[config_path: config.path] }
 
   let(:expected_command) do
-    "bundle exec rails runner -e '[\"Jobs::Kek\", \"Jobs::Pek\"].each { |x| Object.const_get(x) }'"
+    "bundle exec rails runner \"[\"Jobs::Kek\", \"Jobs::Pek\"].each { |x| Object.const_get(x) }\""
   end
 
   it "executes proper rails runner commands" do
     expect(command).to eq(0)
-    expect(popen_executed_commands.size).to eq(1)
+    expect(popen_executed_commands.count).to eq(1)
     expect(popen_executed_commands.first).to eq(expected_command)
+  end
+
+  context "empty schedule" do
+    let(:schedule) do
+      <<~YAML
+        defaults: &defaults
+        development: *defaults
+        test: *defaults
+        staging: *defaults
+        production: *defaults
+      YAML
+    end
+
+    it "executes proper rails runner commands" do
+      expect(command).to eq(0)
+      expect(popen_executed_commands.count).to eq(0)
+    end
   end
 end
