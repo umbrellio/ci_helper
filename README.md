@@ -74,6 +74,8 @@ List of available commands:
     Accepted flags: `--config-path`
     * `--config-path` — relative path to your config yaml file with schedule.
       Usually it is `config/sidekiq_scheduler.yml`.
+    * `--with-database` — if you want to prepare database before executing specs,
+      you should set this flag to `true`.
 
 ### Rake Tasks
 

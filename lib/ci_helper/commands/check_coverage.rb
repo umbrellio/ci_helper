@@ -21,7 +21,7 @@ module CIHelper
       end
 
       def split_resultset?
-        options[:split_resultset] == "true"
+        boolean_option(:split_resultset)
       end
 
       def setup_file_path

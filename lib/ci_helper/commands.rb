@@ -54,6 +54,10 @@ module CIHelper
         raise Error, message
       end
 
+      def boolean_option(key)
+        options[key] == "true"
+      end
+
       def plural_option(key)
         return [] unless options.key?(key)
         options[key].split(",")

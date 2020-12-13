@@ -30,14 +30,31 @@ describe CIHelper::Commands::CheckSidekiqSchedulerConfig do
 
   let(:options) { Hash[config_path: config.path] }
 
-  let(:expected_command) do
-    "bundle exec rails runner \"[\"Jobs::Kek\", \"Jobs::Pek\"].each { |x| Object.const_get(x) }\""
+  let(:expected_commands) do
+    [
+      %(bundle exec rails runner '["Jobs::Kek", "Jobs::Pek"].each { |x| Object.const_get(x) }'),
+    ]
   end
 
   it "executes proper rails runner commands" do
     expect(command).to eq(0)
-    expect(popen_executed_commands.count).to eq(1)
-    expect(popen_executed_commands.first).to eq(expected_command)
+    expect(popen_executed_commands).to eq(expected_commands)
+  end
+
+  context "with database" do
+    let(:options) { Hash[config_path: config.path, with_database: "true"] }
+
+    let(:expected_commands) do
+      [
+        %(export RAILS_ENV=development && bundle exec rake db:drop db:create db:migrate),
+        %(bundle exec rails runner '["Jobs::Kek", "Jobs::Pek"].each { |x| Object.const_get(x) }'),
+      ]
+    end
+
+    it "executes proper rails runner commands" do
+      expect(command).to eq(0)
+      expect(popen_executed_commands).to eq(expected_commands)
+    end
   end
 
   context "empty schedule" do
@@ -51,9 +68,11 @@ describe CIHelper::Commands::CheckSidekiqSchedulerConfig do
       YAML
     end
 
+    let(:expected_commands) { [] }
+
     it "executes proper rails runner commands" do
       expect(command).to eq(0)
-      expect(popen_executed_commands.count).to eq(0)
+      expect(popen_executed_commands).to eq(expected_commands)
     end
   end
 end
