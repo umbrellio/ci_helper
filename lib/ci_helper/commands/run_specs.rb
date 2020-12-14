@@ -37,11 +37,11 @@ module CIHelper
       end
 
       def with_database?
-        options[:with_database] == "true"
+        boolean_option(:with_database)
       end
 
       def split_resultset?
-        options[:split_resultset] == "true"
+        boolean_option(:split_resultset)
       end
     end
   end
