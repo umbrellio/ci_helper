@@ -22,10 +22,10 @@ jobs:
       - uses: actions/cache@master
         with:
           path: |
-            bundler/vendor
+            vendor/bundle
           key: full-check
       - name: Install dependencies
-        run: gem install bundler && bundle config --set local path bundler/vendor && bundle install
+        run: gem install bundler && bundle config path vendor/bundle && bundle install
       - name: Build and install gem to systems gems
         run: bundle exec rake install
       - name: Run Linter
