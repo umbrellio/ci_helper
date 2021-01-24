@@ -22,7 +22,7 @@ jobs:
       - uses: actions/cache@master
         with:
           path: |
-            ~/bundler/vendor
+            bundler/vendor
           key: full-check
       - name: Install dependencies
         run: gem install bundler && bundle config --set local path bundler/vendor && bundle install
