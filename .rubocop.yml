@@ -14,3 +14,7 @@ RSpec/EmptyLineAfterHook:
 Naming/FileName:
   Exclude:
     - lib/ci-helper.rb
+
+Style/HashConversion:
+  Exclude:
+    - spec/**/*_spec.rb

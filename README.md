@@ -31,8 +31,10 @@ A command can accept list of options (parameters). Option values are passed thro
 For example, the BundlerAudit command accepts the ignored_advisories option
 You can set a value of this option by setting the flag `--ignored-advisories ignored-advisory`.
 It should be noted that all hyphens in flag names are automatically replaced with underscores.
+If command accepts array as option's value, you can separate values with either commas or spaces.
 ```bash
-$ ci-helper BundlerAudit --ignored-advisories first,second
+$ ci-helper BundlerAudit --ignored-advisories first,second # Valid
+$ ci-helper BundlerAudit --ignored-advisories first second # Valid too!
 ```
 
 List of available commands:
