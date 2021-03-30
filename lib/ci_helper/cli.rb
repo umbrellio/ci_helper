@@ -26,13 +26,14 @@ module CIHelper
     end
 
     def parse_options_from(args)
-      args.each_slice(2).with_object({}) do |args, options|
-        key = Tools::Inflector.instance.underscore(args.first.split("--").last)
-        value = args[1] || ""
-        raise Error, "Not valid options" if key.empty?
-
-        options[key.to_sym] = value
-      end
+      args
+        .slice_when { |_el_before, el_after| el_after.start_with?("--") }
+        .each_with_object({}) do |commands, options|
+          key = Tools::Inflector.instance.underscore(commands.shift.split("--").last)
+          raise "Invalid options" if key.empty?
+          value = commands.size <= 1 ? commands.first : commands
+          options[key.to_sym] = value || ""
+        end
     end
 
     def perform_command!

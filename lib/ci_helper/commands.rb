@@ -60,6 +60,9 @@ module CIHelper
 
       def plural_option(key)
         return [] unless options.key?(key)
+        value = options[key]
+        return value if value.is_a?(Array)
+
         options[key].split(",")
       end
 

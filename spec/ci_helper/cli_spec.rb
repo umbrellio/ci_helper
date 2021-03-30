@@ -30,7 +30,7 @@ describe CIHelper::CLI do
     let(:args) { [command_class_name, ""] }
 
     it "raises error" do
-      expect { described_class.run!(args) }.to raise_error("Not valid options")
+      expect { described_class.run!(args) }.to raise_error("Invalid options")
     end
   end
 
@@ -40,6 +40,18 @@ describe CIHelper::CLI do
     let(:expected_command) { "bundle exec bundler-audit check --update" }
 
     it "executes audit without ignored advisories" do
+      expect(client_response).to eq(0)
+      expect(popen_executed_commands.size).to eq(1)
+      expect(popen_executed_commands.first).to eq(expected_command)
+    end
+  end
+
+  context "with array in flag arguments" do
+    let(:args) { [command_class_name, "--ignored-advisories", "kek", "pek"] }
+
+    let(:expected_command) { "bundle exec bundler-audit check --update --ignore kek pek" }
+
+    it "properly parses this option" do
       expect(client_response).to eq(0)
       expect(popen_executed_commands.size).to eq(1)
       expect(popen_executed_commands.first).to eq(expected_command)
