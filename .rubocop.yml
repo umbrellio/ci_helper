@@ -17,4 +17,4 @@ Naming/FileName:
 
 Style/HashConversion:
   Exclude:
-    - spec/**/*.rb
+    - spec/**/*_spec.rb
