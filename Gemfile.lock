@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    ci-helper (0.4.3)
+    ci-helper (0.4.2)
       colorize (~> 0.8)
-      dry-inflector (= 0.2.0)
+      dry-inflector (~> 0.2)
       umbrellio-sequel-plugins (~> 0.4)
 
 GEM
@@ -24,7 +24,7 @@ GEM
     concurrent-ruby (1.1.9)
     diff-lcs (1.4.4)
     docile (1.4.0)
-    dry-inflector (0.2.0)
+    dry-inflector (0.2.1)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
     method_source (1.0.0)
