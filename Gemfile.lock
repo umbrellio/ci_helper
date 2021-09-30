@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ci-helper (0.4.2)
+    ci-helper (0.4.3)
       colorize (~> 0.8)
       dry-inflector (= 0.2.0)
       umbrellio-sequel-plugins (~> 0.4)
