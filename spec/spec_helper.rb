@@ -15,11 +15,11 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::LcovFormatter,
 ])
 
-SimpleCov.minimum_coverage(100) if ENV["FULL_COVERAGE_CHECK"] == "true"
-SimpleCov.enable_coverage(:branch)
-SimpleCov.enable_coverage(:line)
-SimpleCov.add_filter "spec"
-SimpleCov.start
+SimpleCov.start do
+  enable_coverage :branch
+  minimum_coverage line: 100, branch: 100 if ENV["FULL_COVERAGE_CHECK"] == "true"
+  add_filter "spec"
+end
 
 require "ci_helper"
 
