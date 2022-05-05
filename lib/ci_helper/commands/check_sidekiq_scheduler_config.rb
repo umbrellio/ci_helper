@@ -39,7 +39,9 @@ module CIHelper
       def config
         @config ||= begin
           path = options[:config_path]
+          # :nocov:
           YAML.respond_to?(:unsafe_load_file) ? YAML.unsafe_load_file(path) : YAML.load_file(path)
+          # :nocov:
         end
       end
     end

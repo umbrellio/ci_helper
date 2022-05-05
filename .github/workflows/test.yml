@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [master]
 
-
-env:
-  FULL_COVERAGE_CHECK: true
-
 jobs:
   full-check:
     runs-on: ubuntu-latest
