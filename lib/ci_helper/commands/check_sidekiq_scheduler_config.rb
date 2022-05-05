@@ -29,7 +29,7 @@ module CIHelper
       end
 
       def job_constants
-        @job_constants ||= config.values.reject(&:nil?).flat_map(&:keys).uniq
+        @job_constants ||= config.values.compact.flat_map(&:keys).uniq
       end
 
       def with_database?
@@ -37,7 +37,7 @@ module CIHelper
       end
 
       def config
-        @config ||= YAML.load_file(options[:config_path])
+        @config ||= YAML.unsafe_load_file(options[:config_path])
       end
     end
   end
