@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "logger"
+require "open3"
 require "sequel/timestamp_migrator_undo_extension"
 
 class SequelManagement
@@ -30,7 +31,10 @@ class SequelManagement
 
         logger.info "Begin rolling back new migrations"
 
-        original_migrations = `#{git_command}`.split.map { |path| File.basename(path) }
+        migration_files, _, status = Open3.capture3(git_command)
+        abort "Can't get list of migration files" unless status.success?
+
+        original_migrations = migration_files.split.map { |path| File.basename(path) }
         migrations_to_rollback = (migrator.applied_migrations - original_migrations).sort.reverse
 
         next if migrations_to_rollback.empty?
