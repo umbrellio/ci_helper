@@ -30,7 +30,10 @@ class SequelManagement
 
         logger.info "Begin rolling back new migrations"
 
-        original_migrations = `#{git_command}`.split.map { |path| File.basename(path) }
+        migration_files = `#{git_command}`
+        abort "Can't get list of migration files" unless $?&.success?
+
+        original_migrations = migration_files.split.map { |path| File.basename(path) }
         migrations_to_rollback = (migrator.applied_migrations - original_migrations).sort.reverse
 
         next if migrations_to_rollback.empty?
