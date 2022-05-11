@@ -31,8 +31,8 @@ class SequelManagement
 
         logger.info "Begin rolling back new migrations"
 
-        migration_files, _, status = Open3.capture3(git_command)
-        abort "Can't get list of migration files" unless status.success?
+        migration_files, error, status = Open3.capture3(git_command)
+        abort "Can't get list of migration files:\n#{error}" unless status.success?
 
         original_migrations = migration_files.split.map { |path| File.basename(path) }
         migrations_to_rollback = (migrator.applied_migrations - original_migrations).sort.reverse
