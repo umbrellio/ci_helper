@@ -24,8 +24,8 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "colorize", "~> 0.8"
-  spec.add_runtime_dependency "dry-inflector", "~> 0.2"
+  spec.add_runtime_dependency "colorize", "~> 1.1"
+  spec.add_runtime_dependency "dry-inflector", "~> 1.0"
   spec.add_runtime_dependency "umbrellio-sequel-plugins", "~> 0.4"
 
   spec.add_development_dependency "bundler"
