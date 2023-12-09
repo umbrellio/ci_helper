@@ -15,7 +15,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.2"
-          bundler-cache: true
+          bundler-cache: false
       - name: Build and install gem to systems gems
         run: bundle exec rake install
       - name: Run Linter
