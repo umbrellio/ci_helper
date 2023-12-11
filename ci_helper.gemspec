@@ -24,16 +24,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "colorize", "~> 0.8"
-  spec.add_runtime_dependency "dry-inflector", "~> 0.2"
-  spec.add_runtime_dependency "umbrellio-sequel-plugins", "~> 0.4"
-
-  spec.add_development_dependency "bundler"
-  spec.add_development_dependency "bundler-audit"
-  spec.add_development_dependency "pry"
-  spec.add_development_dependency "rake"
-  spec.add_development_dependency "rspec"
-  spec.add_development_dependency "rubocop-config-umbrellio"
-  spec.add_development_dependency "simplecov"
-  spec.add_development_dependency "simplecov-lcov"
+  spec.add_runtime_dependency "colorize", "~> 1.1"
+  spec.add_runtime_dependency "dry-inflector", "~> 1.0"
+  spec.add_runtime_dependency "umbrellio-sequel-plugins", "~> 0.14"
 end
