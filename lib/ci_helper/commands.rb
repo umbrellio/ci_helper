@@ -50,6 +50,10 @@ module CIHelper
         execute_with_env("bundle exec rake db:drop db:create db:migrate")
       end
 
+      def create_and_migrate_clickhouse_database!
+        execute_with_env("bundle exec rake ch:create ch:migrate")
+      end
+
       def fail!(message)
         raise Error, message
       end

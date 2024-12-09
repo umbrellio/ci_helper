@@ -7,6 +7,7 @@ module CIHelper
         return if job_files.empty?
 
         create_and_migrate_database! if with_database?
+        create_and_migrate_clickhouse_database! if with_clickhouse?
         execute("bundle exec rspec #{Shellwords.join(job_files)}")
         return 0 unless split_resultset?
 
@@ -38,6 +39,10 @@ module CIHelper
 
       def with_database?
         boolean_option(:with_database)
+      end
+
+      def with_clickhouse?
+        boolean_option(:with_clickhouse)
       end
 
       def split_resultset?
