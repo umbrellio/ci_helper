@@ -9,7 +9,7 @@ describe CIHelper::Commands::RunSpecs do
 
   before { allow(Pathname).to receive(:pwd).and_return(mocked_pathname) }
 
-  let(:options) { Hash[split_resultset: "true", with_database: "true"] }
+  let(:options) { Hash[split_resultset: "true", with_database: "true", with_clickhouse: "true"] }
 
   let(:mocked_pathname) do
     instance_double(Pathname).tap do |pathname|
@@ -28,6 +28,7 @@ describe CIHelper::Commands::RunSpecs do
   let(:expected_commands) do
     [
       "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
+      "export RAILS_ENV=test && bundle exec rake ch:create ch:migrate",
       "bundle exec rspec cool_path_1 cool_path_0",
       "mv coverage/.resultset.json coverage/resultset.1.json",
     ]
@@ -35,7 +36,7 @@ describe CIHelper::Commands::RunSpecs do
 
   it "executes command and exits with success" do
     expect(command).to eq(0)
-    expect(popen_executed_commands.size).to eq(3)
+    expect(popen_executed_commands.size).to eq(4)
     expect(popen_executed_commands).to eq(expected_commands)
   end
 
