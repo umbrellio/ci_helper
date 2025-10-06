@@ -21,6 +21,7 @@ GEM
       tzinfo (~> 2.0)
     ast (2.4.2)
     base64 (0.2.0)
+    benchmark (0.4.1)
     bigdecimal (3.1.4)
     bundler-audit (0.9.1)
       bundler (>= 1.2.0, < 3)
@@ -40,6 +41,7 @@ GEM
     method_source (1.0.0)
     minitest (5.20.0)
     mutex_m (0.2.0)
+    ostruct (0.6.3)
     parallel (1.23.0)
     parser (3.2.2.4)
       ast (~> 2.4.1)
@@ -127,9 +129,11 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  benchmark
   bundler
   bundler-audit
   ci-helper!
+  ostruct
   pry
   rake
   rspec

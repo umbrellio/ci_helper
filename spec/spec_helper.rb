@@ -23,7 +23,7 @@ end
 
 require "ci_helper"
 
-Dir[Pathname(__dir__).join("support/**/*")].sort.each { |x| require(x) }
+Dir[Pathname(__dir__).join("support/**/*")].each { |x| require(x) }
 
 RSpec.configure do |config|
   config.mock_with :rspec do |mocks|
