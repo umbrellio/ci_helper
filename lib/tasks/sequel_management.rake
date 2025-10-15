@@ -13,6 +13,7 @@ class SequelManagement
     self.logger = Logger.new($stdout)
 
     define_db_task!
+    define_ch_task!
   end
 
   private
@@ -21,6 +22,10 @@ class SequelManagement
 
   def migrations_path
     self.class::MIGRATIONS_PATH
+  end
+
+  def ch_migrations_path
+    "db/migrate/clickhouse"
   end
 
   def define_db_task!
@@ -47,6 +52,31 @@ class SequelManagement
     end
   end
 
+  def define_ch_task!
+    namespace :ch do
+      desc "Rollback all migrations, which doesn't exist in master branch"
+      task rollback_new_migrations: :environment do
+        abort "Shouldn't run in production mode!" if Rails.env.production?
+
+        logger.info "Begin rolling back new migrations"
+
+        git_command = "git ls-tree --name-only origin/master #{ch_migrations_path}/"
+        migration_files, error, status = Open3.capture3(git_command)
+        abort "Can't get list of migration files:\n#{error}" unless status.success?
+
+        original_migrations = migration_files.split.map { |path| File.basename(path) }
+        migrations_to_rollback = (ch_migrator.applied_migrations - original_migrations).sort.reverse
+
+        next if migrations_to_rollback.empty?
+
+        logger.info "Rolling back migrations:"
+        logger.info migrations_to_rollback.join("\n")
+
+        ch_rollback!(migrations_to_rollback)
+      end
+    end
+  end
+
   def git_command
     "git ls-tree --name-only origin/master #{migrations_path}/"
   end
@@ -58,9 +88,29 @@ class SequelManagement
     end
   end
 
+  def ch_migrator
+    @ch_migrator ||= begin
+      full_path = Rails.root.join(ch_migrations_path)
+      Sequel::TimestampMigrator.new(DB, full_path, allow_missing_migration_files: true,
+                                                   table: "clickhouse_migrations")
+    end
+  end
+
   def rollback!(migrations)
     migrations.each do |migration|
       migrator.undo(migration.to_i)
+    rescue Sequel::Migrator::Error => error
+      if error.message.include?("does not exist in the filesystem")
+        logger.info error.message
+      else
+        raise error
+      end
+    end
+  end
+
+  def ch_rollback!(migrations)
+    migrations.each do |migration|
+      ch_migrator.undo(migration.to_i)
     rescue Sequel::Migrator::Error => error
       if error.message.include?("does not exist in the filesystem")
         logger.info error.message
