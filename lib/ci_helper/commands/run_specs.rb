@@ -47,11 +47,8 @@ module CIHelper
       def example_ids
         Dir.mktmpdir do |dir|
           output_file = File.join(dir, "rspec_examples.json")
-          files_arg = Shellwords.join(all_spec_files.map { |f| relative(f) })
-          execute(
-            "bundle exec rspec --dry-run --format=json " \
-            "--out #{Shellwords.escape(output_file)} #{files_arg}",
-          )
+          execute("bundle exec rspec --dry-run --format=json " \
+                  "--out #{Shellwords.escape(output_file)}")
           JSON.parse(File.read(output_file)).fetch("examples").map { |e| e.fetch("id") }
         end
       end

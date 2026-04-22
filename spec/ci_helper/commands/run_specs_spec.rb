@@ -57,7 +57,7 @@ describe CIHelper::Commands::RunSpecs do
       [
         "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
         "bundle exec rspec --dry-run --format=json " \
-          "--out /tmp/ci_helper_test/rspec_examples.json cool_path_0 cool_path_1",
+          "--out /tmp/ci_helper_test/rspec_examples.json",
         "bundle exec rspec ./cool_path_1\\[1:1\\] ./cool_path_0\\[1:1\\]",
         "mv coverage/.resultset.json coverage/resultset.2.json",
       ]
@@ -87,7 +87,7 @@ describe CIHelper::Commands::RunSpecs do
         [
           "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
           "bundle exec rspec --dry-run --format=json " \
-            "--out /tmp/ci_helper_test/rspec_examples.json cool_path_0 cool_path_1",
+            "--out /tmp/ci_helper_test/rspec_examples.json",
           "bundle exec rspec ./cool_path_0\\[1:1\\] ./cool_path_1\\[1:1\\]",
           "mv coverage/.resultset.json coverage/resultset.2.json",
         ]
@@ -106,7 +106,7 @@ describe CIHelper::Commands::RunSpecs do
         [
           "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
           "bundle exec rspec --dry-run --format=json " \
-            "--out /tmp/ci_helper_test/rspec_examples.json cool_path_0 cool_path_1",
+            "--out /tmp/ci_helper_test/rspec_examples.json",
         ]
       end
 
