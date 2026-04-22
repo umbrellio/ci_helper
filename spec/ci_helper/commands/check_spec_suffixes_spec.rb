@@ -8,7 +8,7 @@ describe CIHelper::Commands::CheckSpecSuffixes do
 
   subject(:command) { described_class.call!(**options) }
 
-  let(:options) { Hash[] }
+  let(:options) { {} }
 
   specify { expect(command).to eq(0) }
 

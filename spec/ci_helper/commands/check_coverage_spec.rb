@@ -15,8 +15,7 @@ describe CIHelper::Commands::CheckCoverage do
 
   let(:mocked_pathname) do
     instance_double(Pathname).tap do |pathname|
-      allow(pathname).to receive(:glob).and_return(array_of_pathnames)
-      allow(pathname).to receive(:join).and_return(pathname_for_join)
+      allow(pathname).to receive_messages(glob: array_of_pathnames, join: pathname_for_join)
     end
   end
   let(:array_of_pathnames) { Object.new }
@@ -29,7 +28,7 @@ describe CIHelper::Commands::CheckCoverage do
   end
 
   context "without split resultset" do
-    let(:options) { Hash[] }
+    let(:options) { {} }
 
     it "executes collate with default path for resultset" do
       expect(command).to eq(0)
@@ -58,7 +57,7 @@ describe CIHelper::Commands::CheckCoverage do
     subject(:command) { instance.call }
 
     let(:instance) { described_class.new(**options) }
-    let(:options) { Hash[] }
+    let(:options) { {} }
 
     it "doesn't require file" do
       expect(instance).not_to receive(:require)

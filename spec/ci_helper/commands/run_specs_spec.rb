@@ -19,8 +19,7 @@ describe CIHelper::Commands::RunSpecs do
   let(:array_of_pathnames) do
     Array.new(2) do |i|
       instance_double(Pathname).tap do |pathname|
-        allow(pathname).to receive(:size).and_return(1)
-        allow(pathname).to receive(:relative_path_from).and_return("cool_path_#{i}")
+        allow(pathname).to receive_messages(size: 1, relative_path_from: "cool_path_#{i}")
       end
     end
   end
@@ -57,7 +56,7 @@ describe CIHelper::Commands::RunSpecs do
       [
         "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
         "bundle exec rspec --dry-run --format=json " \
-          "--out /tmp/ci_helper_test/rspec_examples.json",
+        "--out /tmp/ci_helper_test/rspec_examples.json",
         "bundle exec rspec ./cool_path_1\\[1:1\\] ./cool_path_0\\[1:1\\]",
         "mv coverage/.resultset.json coverage/resultset.2.json",
       ]
@@ -87,7 +86,7 @@ describe CIHelper::Commands::RunSpecs do
         [
           "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
           "bundle exec rspec --dry-run --format=json " \
-            "--out /tmp/ci_helper_test/rspec_examples.json",
+          "--out /tmp/ci_helper_test/rspec_examples.json",
           "bundle exec rspec ./cool_path_0\\[1:1\\] ./cool_path_1\\[1:1\\]",
           "mv coverage/.resultset.json coverage/resultset.2.json",
         ]
@@ -106,7 +105,7 @@ describe CIHelper::Commands::RunSpecs do
         [
           "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
           "bundle exec rspec --dry-run --format=json " \
-            "--out /tmp/ci_helper_test/rspec_examples.json",
+          "--out /tmp/ci_helper_test/rspec_examples.json",
         ]
       end
 
@@ -118,7 +117,7 @@ describe CIHelper::Commands::RunSpecs do
   end
 
   context "without database and resultset splitting" do
-    let(:options) { Hash[] }
+    let(:options) { {} }
 
     let(:expected_commands) { ["bundle exec rspec cool_path_1 cool_path_0"] }
 

@@ -7,7 +7,7 @@ describe CIHelper::Commands::BundlerAudit do
 
   subject(:command) { described_class.call!(**options) }
 
-  let(:options) { Hash[] }
+  let(:options) { {} }
 
   it "executes proper command and exits with success" do
     expect(command).to eq(0)

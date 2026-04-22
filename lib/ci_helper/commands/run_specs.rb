@@ -86,15 +86,15 @@ module CIHelper
       end
 
       def with_database?
-        boolean_option(:with_database)
+        boolean_option?(:with_database)
       end
 
       def with_clickhouse?
-        boolean_option(:with_clickhouse)
+        boolean_option?(:with_clickhouse)
       end
 
       def split_resultset?
-        boolean_option(:split_resultset)
+        boolean_option?(:split_resultset)
       end
     end
   end

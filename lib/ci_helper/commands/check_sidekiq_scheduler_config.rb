@@ -33,7 +33,7 @@ module CIHelper
       end
 
       def with_database?
-        boolean_option(:with_database)
+        boolean_option?(:with_database)
       end
 
       def config
