@@ -7,7 +7,7 @@ describe CIHelper::Commands::CheckDBRollback do
 
   subject(:command) { described_class.call!(**options) }
 
-  let(:options) { Hash[] }
+  let(:options) { {} }
 
   let(:expected_commands) do
     [

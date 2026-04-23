@@ -6,8 +6,8 @@ module CIHelper
 
     class BaseCommand
       class << self
-        def call!(**options)
-          new(**options).call
+        def call!(**)
+          new(**).call
         end
 
         # :nocov:
@@ -58,7 +58,7 @@ module CIHelper
         raise Error, message
       end
 
-      def boolean_option(key)
+      def boolean_option?(key)
         options[key] == "true"
       end
 

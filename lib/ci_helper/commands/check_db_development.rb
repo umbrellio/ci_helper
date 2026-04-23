@@ -17,7 +17,7 @@ module CIHelper
       end
 
       def with_clickhouse?
-        boolean_option(:with_clickhouse)
+        boolean_option?(:with_clickhouse)
       end
     end
   end
