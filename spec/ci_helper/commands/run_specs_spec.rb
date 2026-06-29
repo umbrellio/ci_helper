@@ -114,6 +114,52 @@ describe CIHelper::Commands::RunSpecs do
         expect(popen_executed_commands).to eq(expected_commands)
       end
     end
+
+    context "when dry-run exits with non-zero code" do
+      before do
+        allow(Open3).to receive(:popen2e) do |cmd, &block|
+          popen_executed_commands << cmd
+          thread = if cmd.include?("--dry-run")
+                     instance_double(Thread, value: instance_double(Process::Status, exitstatus: 1))
+                   else
+                     popen_thread
+                   end
+          block.call(StringIO.new, StringIO.new, thread)
+        end
+      end
+
+      context "when output file exists" do
+        let(:error_output) { '{"messages":["LoadError: cannot load such file -- some_gem"]}' }
+
+        before do
+          allow(File).to receive(:exist?)
+            .with("/tmp/ci_helper_test/rspec_examples.json").and_return(true)
+          allow(File).to receive(:read)
+            .with("/tmp/ci_helper_test/rspec_examples.json").and_return(error_output)
+        end
+
+        it "raises error with output file contents" do
+          expect { command }.to raise_error(
+            CIHelper::Commands::Error,
+            /RSpec dry-run failed\..*#{Regexp.escape(error_output)}/m,
+          )
+        end
+      end
+
+      context "when output file is missing" do
+        before do
+          allow(File).to receive(:exist?)
+            .with("/tmp/ci_helper_test/rspec_examples.json").and_return(false)
+        end
+
+        it "raises error noting missing file" do
+          expect { command }.to raise_error(
+            CIHelper::Commands::Error,
+            /RSpec dry-run failed\..*\(no output file\)/m,
+          )
+        end
+      end
+    end
   end
 
   context "without database and resultset splitting" do
