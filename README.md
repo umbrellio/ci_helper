@@ -14,7 +14,7 @@ $ bundle install
 ```
 Or install it yourself as:
 ```bash
-$ gem install ci_helper
+$ gem install ci-helper
 ```
 
 ## Usage
