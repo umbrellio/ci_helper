@@ -14,7 +14,7 @@ $ bundle install
 ```
 Or install it yourself as:
 ```bash
-$ gem install ci_helper
+$ gem install ci-helper
 ```
 
 ## Usage
@@ -42,28 +42,36 @@ List of available commands:
 * **BundlerAudit** — executes `bundler-audit`. Accepted flags: `--ignored-advisories`.
     * `--ignored-advisories [values]` — accepts advisory codes, delimited by comma.
 * **CheckDBDevelopment** — executes rails db commands (`db:drop`, `db:create`, `db:migrate`)
-    and seeds database. Does not accept flags.
+    and seeds database. Accepted flags: `--with-clickhouse`.
+    * `--with-clickhouse` — if set to `true`, also creates and migrates the ClickHouse
+        database (`ch:create`, `ch:migrate`).
 * **CheckDBRollback** — executes rails db commands with additional command
     `db:rollback_new_migrations`, which rollbacks migrations, added in tested branch.
-    Does not accept flags. Gem provides this rake task, but only for `Sequel`.
+    Gem provides this rake task, but only for `Sequel`.
     If you want to use `ActiveRecord::Migrator`, you'll have to write rake task by your own.
+    Accepted flags: `--with-clickhouse`.
+    * `--with-clickhouse` — if set to `true`, runs the same create/rollback/migrate cycle
+        for the ClickHouse database (`ch:create`, `ch:migrate`, `ch:rollback_new_migrations`).
 * **RubocopLint** — executes rubocop linter. Does not accept flags.
 * **RunSpecs** — executes `rspec` in project root.
-    Accepted flags: `--node-index`, `node-total`, `with-database`, `split-resultset`.
+    Accepted flags: `--node-index`, `--node-total`, `--with-database`, `--with-clickhouse`,
+    `--split-resultset`.
     * `--node-index` — if you run specs in parallel in CI, then you might use this flag.
     * `--node-total` — if you run specs in parallel in CI, then you might use this flag.
     * `--with-database` — if you want to prepare database before executing specs,
         you should set this flag to `true`.
+    * `--with-clickhouse` — if you want to prepare the ClickHouse database before executing
+        specs, you should set this flag to `true`.
     * `--split-resultset` — if you run specs in parallel in CI,
         then you might use this flag to `true`. If this flag set to true,
-        final `.resultset.json` will be renamed to `.resultset.#{node_index}.json`
+        final `.resultset.json` will be renamed to `resultset.#{node_index}.json`
 * **CheckSpecSuffixes** — checks specs in the spec subdirectories for `_spec` suffix,
     by default ignores directories `support`, `factories` and files with `context` suffix.
-    Accepted flags: `--extra_paths`, `--ignored_paths`.
+    Accepted flags: `--extra-paths`, `--ignored-paths`.
     * `--extra-paths [values]` - accepts additional path patterns that should be scanned,
-        delimited by coma.
+        delimited by comma.
     * `--ignored-paths [values]` - accepts path patterns that should be ignored,
-        delimited by coma.
+        delimited by comma.
 * **CheckCoverage** — checks coverage by executing `SimpleCov::collate`.
     Accepted flags: `--split-resultset`, `--setup-file-path`.
     * `--split-resultset` — if you execute command `RunSpecs` with `--split-resultset true`,
@@ -73,17 +81,17 @@ List of available commands:
     * `--setup-file-path` — relative path to your `.rb` file, which setups `SimpleCov`.
       Usually it is `spec_helper.rb`.
 * **CheckSidekiqSchedulerConfig** — checks `sidekiq_scheduler` config by trying to resolve jobs constants via `rails runner`.
-    Accepted flags: `--config-path`
+    Accepted flags: `--config-path`, `--with-database`.
     * `--config-path` — relative path to your config yaml file with schedule.
       Usually it is `config/sidekiq_scheduler.yml`.
-    * `--with-database` — if you want to prepare database before executing specs,
+    * `--with-database` — if you want to prepare the database before resolving job constants,
       you should set this flag to `true`.
 
 ### Rake Tasks
 
 As you can see, some commands use generic rake tasks. To make tasks available in your application,
 you need to require the file `ci_helper/railtie`. Also, you can require it directly in `Gemfile`:
-`gem "ci-helper", require: "ci_helper/railtie, group: :test`.
+`gem "ci-helper", require: "ci_helper/railtie", group: :test`.
 Or if you haven't set `require` option to `false`, rake tasks loads automatically.
 
 ### Script
@@ -110,7 +118,7 @@ You just need create gem with following structure:
       - cool_command.rb
 ```
 
-Where your `CoolCoomand` class may look something like this:
+Where your `CoolCommand` class may look something like this:
 ```ruby
 module CIHelper
   module Commands
