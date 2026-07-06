@@ -2,7 +2,14 @@
 
 module CIHelper
   module Commands
-    class Error < StandardError; end
+    class Error < StandardError
+      attr_reader :output
+
+      def initialize(message, output: nil)
+        super(message)
+        @output = output
+      end
+    end
 
     class BaseCommand
       class << self
@@ -26,16 +33,19 @@ module CIHelper
         execute(*commands)
       end
 
-      def execute(*commands)
+      def execute(*commands, capture: false)
         command = commands.join(" && ")
 
         process_stdout.puts(Tools::Colorize.command(command))
 
+        captured = +"" if capture
         Open3.popen2e(command) do |_stdin, stdout, thread|
-          stdout.each_char { |char| process_stdout.print(char) }
+          stdout.each_char { |char| capture ? captured << char : process_stdout.print(char) }
           exit_code = thread.value.exitstatus
 
-          fail!("Bad exit code #{exit_code} for command #{command.inspect}") unless exit_code.zero?
+          unless exit_code.zero?
+            fail!("Bad exit code #{exit_code} for command #{command.inspect}", output: captured)
+          end
           0
         end
       end
@@ -54,8 +64,8 @@ module CIHelper
         execute_with_env("bundle exec rake ch:create ch:migrate")
       end
 
-      def fail!(message)
-        raise Error, message
+      def fail!(message, output: nil)
+        raise Error.new(message, output: output)
       end
 
       def boolean_option?(key)
