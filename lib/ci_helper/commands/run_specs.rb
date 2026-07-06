@@ -50,10 +50,10 @@ module CIHelper
           begin
             execute(
               "bundle exec rspec --dry-run --format=json --out #{Shellwords.escape(output_file)}",
+              capture: true,
             )
-          rescue Error
-            output = File.exist?(output_file) ? File.read(output_file) : "(no output file)"
-            fail!("RSpec dry-run failed. Output file contents:\n#{output}")
+          rescue Error => error
+            fail!("RSpec dry-run failed:\n#{error.output}")
           end
           JSON.parse(File.read(output_file)).fetch("examples").map { |e| e.fetch("id") }
         end

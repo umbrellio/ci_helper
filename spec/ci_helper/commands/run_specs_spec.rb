@@ -116,47 +116,28 @@ describe CIHelper::Commands::RunSpecs do
     end
 
     context "when dry-run exits with non-zero code" do
+      let(:rspec_error_output) do
+        "An error occurred while loading ./spec/broken_spec.rb.\n" \
+          "LoadError: cannot load such file -- some_gem"
+      end
+
       before do
         allow(Open3).to receive(:popen2e) do |cmd, &block|
           popen_executed_commands << cmd
-          thread = if cmd.include?("--dry-run")
-                     instance_double(Thread, value: instance_double(Process::Status, exitstatus: 1))
-                   else
-                     popen_thread
-                   end
-          block.call(StringIO.new, StringIO.new, thread)
+          if cmd.include?("--dry-run")
+            thread = instance_double(Thread, value: instance_double(Process::Status, exitstatus: 1))
+            block.call(StringIO.new, StringIO.new(rspec_error_output), thread)
+          else
+            block.call(StringIO.new, StringIO.new("kek"), popen_thread)
+          end
         end
       end
 
-      context "when output file exists" do
-        let(:error_output) { '{"messages":["LoadError: cannot load such file -- some_gem"]}' }
-
-        before do
-          allow(File).to receive(:exist?)
-            .with("/tmp/ci_helper_test/rspec_examples.json").and_return(true)
-          allow(File).to receive(:read)
-            .with("/tmp/ci_helper_test/rspec_examples.json").and_return(error_output)
-        end
-
-        it "raises error with output file contents" do
-          expect { command }.to raise_error(
-            CIHelper::Commands::Error,
-            /RSpec dry-run failed\..*#{Regexp.escape(error_output)}/m,
-          )
-        end
-      end
-
-      context "when output file is missing" do
-        before do
-          allow(File).to receive(:exist?)
-            .with("/tmp/ci_helper_test/rspec_examples.json").and_return(false)
-        end
-
-        it "raises error noting missing file" do
-          expect { command }.to raise_error(
-            CIHelper::Commands::Error,
-            /RSpec dry-run failed\..*\(no output file\)/m,
-          )
+      it "fails with the rspec command output rather than the json file" do
+        expect { command }.to raise_error(CIHelper::Commands::Error) do |error|
+          expect(error.message).to include("RSpec dry-run failed:")
+          expect(error.message).to include(rspec_error_output)
+          expect(error.message).not_to include("Output file contents")
         end
       end
     end
