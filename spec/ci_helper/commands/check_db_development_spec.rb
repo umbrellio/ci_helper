@@ -23,7 +23,7 @@ describe CIHelper::Commands::CheckDBDevelopment do
   end
 
   context "when with_clickhouse options" do
-    let(:options) { Hash[with_clickhouse: "true"] }
+    let(:options) { { with_clickhouse: "true" } }
 
     let(:expected_commands) do
       [

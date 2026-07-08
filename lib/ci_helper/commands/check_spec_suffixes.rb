@@ -4,7 +4,7 @@ module CIHelper
   module Commands
     class CheckSpecSuffixes < BaseCommand
       def call
-        paths = target_paths.reject { |path| path.end_with?("_spec.rb") }
+        paths = target_paths.grep_v(/_spec\.rb\z/)
         fail!("Detected specs without _spec suffix: #{paths.join(" ")}") if paths.any?
         0
       end
@@ -16,16 +16,13 @@ module CIHelper
       end
 
       def spec_paths
-        base_paths.select do |path|
-          next if path.start_with?("spec/support")
-          next if path.start_with?("spec/factories")
-          next if path.end_with?("context.rb")
-          true
-        end
+        base_paths
+          .grep_v(%r{\A(?:spec/support|spec/factories)})
+          .grep_v(/context\.rb\z/)
       end
 
       def base_paths
-        Dir["spec/*/**/*.rb"]
+        path.glob("spec/*/**/*.rb").map { |file| file.relative_path_from(path).to_s }
       end
 
       def extra_paths

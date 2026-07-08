@@ -64,7 +64,7 @@ class SequelManagement
         migration_files, error, status = Open3.capture3(git_command)
         abort "Can't get list of migration files:\n#{error}" unless status.success?
 
-        original_migrations = migration_files.split.map { |path| File.basename(path) }
+        original_migrations = migration_files.split.filter_map { |path| File.basename(path) }
         migrations_to_rollback = (ch_migrator.applied_migrations - original_migrations).sort.reverse
 
         next if migrations_to_rollback.empty?
@@ -103,7 +103,7 @@ class SequelManagement
       if error.message.include?("does not exist in the filesystem")
         logger.info error.message
       else
-        raise error
+        raise
       end
     end
   end
@@ -115,7 +115,7 @@ class SequelManagement
       if error.message.include?("does not exist in the filesystem")
         logger.info error.message
       else
-        raise error
+        raise
       end
     end
   end

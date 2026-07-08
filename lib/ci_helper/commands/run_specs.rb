@@ -33,7 +33,7 @@ module CIHelper
 
       def job_files
         heavy_files, std_files = all_spec_files.partition { |f| heavy?(relative(f)) }
-        sorted_std = std_files.map { |f| [f.size, relative(f)] }.sort.map(&:last)
+        sorted_std = std_files.sort_by(&:size).map { |f| relative(f) }
         distribute(sorted_std + heavy_files)
       end
 
@@ -55,14 +55,15 @@ module CIHelper
           rescue Error => error
             fail!("RSpec dry-run failed:\n#{error.output}")
           end
-          JSON.parse(File.read(output_file)).fetch("examples").map { |e| e.fetch("id") }
+          JSON.parse(File.read(output_file)).fetch("examples").filter_map { |e| e["id"] }
         end
       end
 
       def distribute(items)
-        items.reverse.select.with_index do |_item, index|
-          (index % job_count) == (job_index - 1)
-        end
+        reversed = items.reverse
+        selected_indices =
+          (job_index.pred..).step(job_count).take_while { |index| index < reversed.length }
+        selected_indices.map { |index| reversed[index] }
       end
 
       def heavy?(relative_path)

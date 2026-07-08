@@ -65,7 +65,7 @@ module CIHelper
       end
 
       def fail!(message, output: nil)
-        raise Error.new(message, output: output)
+        raise Error.new(message, output:)
       end
 
       def boolean_option?(key)
