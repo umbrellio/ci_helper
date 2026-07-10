@@ -29,7 +29,7 @@ module CIHelper
       end
 
       def job_constants
-        @job_constants ||= config.values.compact.flat_map(&:keys).to_set.to_a
+        @job_constants ||= config.values.compact.flat_map(&:keys).uniq
       end
 
       def with_database?
