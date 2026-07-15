@@ -11,7 +11,7 @@ describe CIHelper::Commands::CheckCoverage do
   before { allow(Pathname).to receive(:pwd).and_return(mocked_pathname) }
 
   let(:collate_args) { [] }
-  let(:options) { Hash[split_resultset: "true"] }
+  let(:options) { { split_resultset: "true" } }
 
   let(:mocked_pathname) do
     instance_double(Pathname).tap do |pathname|
@@ -42,7 +42,7 @@ describe CIHelper::Commands::CheckCoverage do
     subject(:command) { instance.call }
 
     let(:instance) { described_class.new(**options) }
-    let(:options) { Hash[setup_file_path: "relative/path/to/spec_helper"] }
+    let(:options) { { setup_file_path: "relative/path/to/spec_helper" } }
 
     it "requires this file" do
       expect(instance).to receive(:require).with(pathname_for_join)

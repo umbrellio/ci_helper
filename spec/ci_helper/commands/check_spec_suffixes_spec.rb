@@ -13,7 +13,7 @@ describe CIHelper::Commands::CheckSpecSuffixes do
   specify { expect(command).to eq(0) }
 
   context "with extra paths" do
-    let(:options) { Hash[extra_paths: "spec/*.rb"] }
+    let(:options) { { extra_paths: "spec/*.rb" } }
 
     specify do
       expect { command }.to raise_error(/specs without _spec suffix/)
@@ -42,7 +42,7 @@ describe CIHelper::Commands::CheckSpecSuffixes do
     end
 
     context "with ignored paths" do
-      let(:options) { Hash[ignored_paths: "spec/ci_helper/*.rb"] }
+      let(:options) { { ignored_paths: "spec/ci_helper/*.rb" } }
 
       specify { expect(command).to eq(0) }
     end
