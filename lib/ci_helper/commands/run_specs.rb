@@ -8,6 +8,7 @@ module CIHelper
   module Commands
     class RunSpecs < BaseCommand
       DEFAULT_SPLIT_THRESHOLD = 30.0
+      TIMINGS_FORMATTER_PATH = File.expand_path("../tools/rspec_timings_formatter.rb", __dir__)
 
       def call
         return if all_spec_files.empty?
@@ -18,9 +19,7 @@ module CIHelper
         specs_to_run = job_count == 1 ? job_files : job_examples
         return 0 if specs_to_run.empty?
 
-        FileUtils.mkdir_p(File.dirname(timings_out)) if timings_out
-        execute("bundle exec rspec #{Shellwords.join(timings_out_arguments + specs_to_run)}")
-        write_flat_timings! if timings_out
+        run_rspec!(specs_to_run)
         return 0 unless split_resultset?
 
         execute("mv coverage/.resultset.json coverage/resultset.#{job_index}.json")
@@ -100,18 +99,28 @@ module CIHelper
         options[:timings_out]
       end
 
-      def timings_out_arguments
-        timings_out ? ["--format", "progress", "--format", "json", "--out", timings_out] : []
+      # Runs rspec, additionally recording per-example timings when --timings-out is set.
+      # The recorder is registered through --require rather than --format so it never displaces
+      # the formatters the suite configures via .rspec (in RSpec a command-line --format replaces
+      # them), and it writes even when examples fail, since rspec still reaches its summary hook.
+      def run_rspec!(specs_to_run)
+        return execute("bundle exec rspec #{Shellwords.join(specs_to_run)}") unless timings_out
+
+        FileUtils.mkdir_p(File.dirname(timings_out))
+        Dir.mktmpdir do |dir|
+          setup = File.join(dir, "ci_helper_timings_formatter_setup.rb")
+          File.write(setup, timings_formatter_setup)
+          execute("bundle exec rspec #{Shellwords.join(["--require", setup, *specs_to_run])}")
+        end
       end
 
-      # Rewrites the rspec JSON report into a flat {example_id => seconds} map,
-      # the same format consumed via --timings-file.
-      def write_flat_timings!
-        report = JSON.parse(File.read(timings_out))
-        flat = report.fetch("examples").to_h { |ex| [ex.fetch("id"), ex["run_time"].to_f] }
-        File.write(timings_out, JSON.dump(flat))
-      rescue StandardError => error
-        process_stdout.puts("WARNING: failed to save spec timings: #{error.message}")
+      def timings_formatter_setup
+        <<~RUBY
+          require #{TIMINGS_FORMATTER_PATH.inspect}
+          RSpec.configure do |config|
+            config.add_formatter(CIHelper::Tools::RSpecTimingsFormatter, #{timings_out.inspect})
+          end
+        RUBY
       end
 
       def example_ids

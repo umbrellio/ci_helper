@@ -201,39 +201,34 @@ describe CIHelper::Commands::RunSpecs do
           timings_out: "coverage/spec_timings.2.json"
         }
       end
+      let(:setup_path) { "/tmp/ci_helper_test/ci_helper_timings_formatter_setup.rb" }
       let(:expected_commands) do
         [
           "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
           "bundle exec rspec --dry-run --format=json " \
           "--out /tmp/ci_helper_test/rspec_examples.json",
-          "bundle exec rspec --format progress --format json --out coverage/spec_timings.2.json " \
+          "bundle exec rspec --require #{setup_path} " \
           "./cool_path_1\\[1:1\\] ./cool_path_0\\[1:1\\]",
           "mv coverage/.resultset.json coverage/resultset.2.json",
         ]
       end
-
-      let(:rspec_report_json) do
-        JSON.dump(examples: [
-          { id: "./cool_path_0[1:1]", run_time: 1.5 },
-          { id: "./cool_path_1[1:1]", run_time: 0.25 },
-        ])
+      let(:formatter_registration) do
+        "config.add_formatter(CIHelper::Tools::RSpecTimingsFormatter, " \
+          "\"coverage/spec_timings.2.json\")"
       end
 
       before do
         allow(FileUtils).to receive(:mkdir_p)
-        allow(File).to receive(:read)
-          .with("coverage/spec_timings.2.json").and_return(rspec_report_json)
         allow(File).to receive(:write)
       end
 
-      it "records a flat timings map of the run" do
+      # The recorder is added via --require (not --format), so RSpec keeps the suite's own
+      # formatters, and it writes the flat map itself even when examples fail.
+      it "records timings via an added formatter without displacing configured ones" do
         expect(command).to eq(0)
         expect(popen_executed_commands).to eq(expected_commands)
         expect(FileUtils).to have_received(:mkdir_p).with("coverage")
-        expect(File).to have_received(:write).with(
-          "coverage/spec_timings.2.json",
-          JSON.dump("./cool_path_0[1:1]" => 1.5, "./cool_path_1[1:1]" => 0.25),
-        )
+        expect(File).to have_received(:write).with(setup_path, include(formatter_registration))
       end
     end
 
