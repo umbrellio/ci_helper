@@ -115,6 +115,122 @@ describe CIHelper::Commands::RunSpecs do
       end
     end
 
+    context "with a timings file" do
+      let(:options) do
+        {
+          split_resultset: "true", with_database: "true", node_index: "2", node_total: "2",
+          timings_file: "spec_timings.json"
+        }
+      end
+      let(:expected_commands) do
+        [
+          "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
+          "bundle exec rspec --dry-run --format=json " \
+          "--out /tmp/ci_helper_test/rspec_examples.json",
+          "bundle exec rspec ./cool_path_0\\[1:2\\] ./cool_path_1",
+          "mv coverage/.resultset.json coverage/resultset.2.json",
+        ]
+      end
+
+      # cool_path_0 totals 45s (> 30s threshold) and is split by example;
+      # cool_path_1[1:2] is absent and gets the median weight (5.0), so
+      # cool_path_1 totals 6s and stays whole. LPT: node 1 <- [1:1] (40),
+      # node 2 <- cool_path_1 (6) and cool_path_0[1:2] (5).
+      let(:timings_json) do
+        JSON.dump(
+          "./cool_path_0[1:1]" => 40.0,
+          "./cool_path_0[1:2]" => 5.0,
+          "./cool_path_1[1:1]" => 1.0,
+        )
+      end
+
+      before do
+        allow(File).to receive(:read).with("spec_timings.json").and_return(timings_json)
+      end
+
+      it "packs by recorded timings, splitting heavy files by example" do
+        expect(command).to eq(0)
+        expect(popen_executed_commands).to eq(expected_commands)
+      end
+
+      context "when running the first node" do
+        let(:options) { super().merge(node_index: "1") }
+
+        let(:expected_commands) do
+          [
+            "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
+            "bundle exec rspec --dry-run --format=json " \
+            "--out /tmp/ci_helper_test/rspec_examples.json",
+            "bundle exec rspec ./cool_path_0\\[1:1\\]",
+            "mv coverage/.resultset.json coverage/resultset.1.json",
+          ]
+        end
+
+        it "gets the complementary part of the partition" do
+          expect(command).to eq(0)
+          expect(popen_executed_commands).to eq(expected_commands)
+        end
+      end
+
+      context "when the timings file is unreadable" do
+        before do
+          allow(File).to receive(:read).with("spec_timings.json").and_raise(Errno::ENOENT)
+        end
+
+        let(:expected_commands) do
+          [
+            "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
+            "bundle exec rspec --dry-run --format=json " \
+            "--out /tmp/ci_helper_test/rspec_examples.json",
+            "bundle exec rspec ./cool_path_1\\[1:1\\] ./cool_path_0\\[1:1\\]",
+            "mv coverage/.resultset.json coverage/resultset.2.json",
+          ]
+        end
+
+        it "falls back to the count-based split" do
+          expect(command).to eq(0)
+          expect(popen_executed_commands).to eq(expected_commands)
+        end
+      end
+    end
+
+    context "with timings output" do
+      let(:options) do
+        {
+          split_resultset: "true", with_database: "true", node_index: "2", node_total: "2",
+          timings_out: "coverage/spec_timings.2.json"
+        }
+      end
+      let(:setup_path) { "/tmp/ci_helper_test/ci_helper_timings_setup.rb" }
+      let(:expected_commands) do
+        [
+          "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
+          "bundle exec rspec --dry-run --format=json " \
+          "--out /tmp/ci_helper_test/rspec_examples.json",
+          "bundle exec rspec --require #{setup_path} " \
+          "./cool_path_1\\[1:1\\] ./cool_path_0\\[1:1\\]",
+          "mv coverage/.resultset.json coverage/resultset.2.json",
+        ]
+      end
+      let(:recorder_setup) do
+        "CIHelper::Tools::SpecTimingsRecorder.install(\"coverage/spec_timings.2.json\")"
+      end
+
+      before do
+        allow(FileUtils).to receive(:mkdir_p)
+        allow(File).to receive(:write)
+      end
+
+      # The recorder is wired in via --require (not --format), so RSpec keeps the suite's own
+      # formatters and default output, and it writes the flat map itself even when examples fail.
+      it "records timings via a required recorder without touching configured formatters" do
+        expect(command).to eq(0)
+        expect(popen_executed_commands).to eq(expected_commands)
+        expect(FileUtils).to have_received(:mkdir_p).with("coverage")
+        expect(File).to have_received(:write).with(setup_path, include(recorder_setup))
+      end
+    end
+
     context "when dry-run exits with non-zero code" do
       let(:rspec_error_output) do
         "An error occurred while loading ./spec/broken_spec.rb.\n" \

@@ -55,7 +55,7 @@ List of available commands:
 * **RubocopLint** — executes rubocop linter. Does not accept flags.
 * **RunSpecs** — executes `rspec` in project root.
     Accepted flags: `--node-index`, `--node-total`, `--with-database`, `--with-clickhouse`,
-    `--split-resultset`.
+    `--split-resultset`, `--timings-file`, `--timings-out`, `--timings-split-threshold`.
     * `--node-index` — if you run specs in parallel in CI, then you might use this flag.
     * `--node-total` — if you run specs in parallel in CI, then you might use this flag.
     * `--with-database` — if you want to prepare database before executing specs,
@@ -65,6 +65,18 @@ List of available commands:
     * `--split-resultset` — if you run specs in parallel in CI,
         then you might use this flag to `true`. If this flag set to true,
         final `.resultset.json` will be renamed to `resultset.#{node_index}.json`
+    * `--timings-file` — path to a JSON file with previously recorded example timings
+        (`{"./spec/a_spec.rb[1:1]": 0.42, ...}`). When the file is present and non-empty,
+        parallel nodes pack whole spec files by total recorded time (greedy LPT) instead of
+        splitting examples evenly by count; files heavier than the split threshold are packed
+        example by example, and examples missing from the file get the median recorded time.
+        If the file is missing or unreadable, the count-based split is used.
+        `spec/heavy_specs.yml` is ignored in this mode.
+    * `--timings-out` — path to write this run's per-example timings as a flat JSON map
+        (the `--timings-file` format). Merge the files from all nodes to build the timings
+        input for future runs.
+    * `--timings-split-threshold` — total seconds above which a single spec file is split
+        example by example between nodes (default 30).
 * **CheckSpecSuffixes** — checks specs in the spec subdirectories for `_spec` suffix,
     by default ignores directories `support`, `factories` and files with `context` suffix.
     Accepted flags: `--extra-paths`, `--ignored-paths`.

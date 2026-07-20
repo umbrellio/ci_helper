@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
+require "fileutils"
 require "json"
 require "tmpdir"
 
 module CIHelper
   module Commands
     class RunSpecs < BaseCommand
+      DEFAULT_SPLIT_THRESHOLD = 30.0
+      TIMINGS_RECORDER_PATH = File.expand_path("../tools/spec_timings_recorder.rb", __dir__)
+
       def call
         return if all_spec_files.empty?
 
@@ -15,7 +19,7 @@ module CIHelper
         specs_to_run = job_count == 1 ? job_files : job_examples
         return 0 if specs_to_run.empty?
 
-        execute("bundle exec rspec #{Shellwords.join(specs_to_run)}")
+        run_rspec!(specs_to_run)
         return 0 unless split_resultset?
 
         execute("mv coverage/.resultset.json coverage/resultset.#{job_index}.json")
@@ -38,14 +42,88 @@ module CIHelper
       end
 
       def job_examples
+        timings.empty? ? counted_job_examples : timed_job_examples
+      end
+
+      def counted_job_examples
         heavy, std = example_ids.partition do |id|
           heavy?(id.split("[", 2).first.delete_prefix("./"))
         end
         distribute(std.sort + heavy.sort)
       end
 
-      def example_ids
+      # Greedy LPT packing: files are weighted by the sum of their examples'
+      # timings (unknown examples get the median), files heavier than the split
+      # threshold are packed example by example. Deterministic on identical
+      # input, so every parallel node computes the same partition.
+      def timed_job_examples
+        loads = Array.new(job_count, 0.0)
+        own_items = []
+
+        weighted_items.sort_by { |item, weight| [-weight, item] }.each do |item, weight|
+          node = loads.each_with_index.min_by { |load, index| [load, index] }.last
+          loads[node] += weight
+          own_items << item if node == job_index - 1
+        end
+
+        own_items.sort
+      end
+
+      def weighted_items
+        example_ids.group_by { |id| id.split("[", 2).first }.flat_map do |file, ids|
+          weights = ids.map { |id| [id, timings.fetch(id, default_example_weight)] }
+          total = weights.sum(&:last)
+          total > split_threshold ? weights : [[file, total]]
+        end
+      end
+
+      def timings
+        @timings ||=
+          begin
+            parsed = options[:timings_file] ? JSON.parse(File.read(options[:timings_file])) : {}
+            parsed.is_a?(Hash) ? parsed.select { |_id, time| time.is_a?(Numeric) } : {}
+          rescue SystemCallError, JSON::ParserError
+            {}
+          end
+      end
+
+      def default_example_weight
+        @default_example_weight ||= timings.values.sort[timings.size / 2]
+      end
+
+      def split_threshold
+        @split_threshold ||= Float(options[:timings_split_threshold] || DEFAULT_SPLIT_THRESHOLD)
+      end
+
+      def timings_out
+        options[:timings_out]
+      end
+
+      # Runs rspec, additionally recording per-example timings when --timings-out is set.
+      # The recorder is wired in through --require rather than --format: --format would replace
+      # the formatters the suite configures via .rspec, and even an added formatter would occupy
+      # the formatter list and suppress rspec's default progress output. It runs from an
+      # after(:suite) hook instead, so it writes even when examples fail and touches no formatter.
+      def run_rspec!(specs_to_run)
+        return execute("bundle exec rspec #{Shellwords.join(specs_to_run)}") unless timings_out
+
+        FileUtils.mkdir_p(File.dirname(timings_out))
         Dir.mktmpdir do |dir|
+          setup = File.join(dir, "ci_helper_timings_setup.rb")
+          File.write(setup, timings_recorder_setup)
+          execute("bundle exec rspec #{Shellwords.join(["--require", setup, *specs_to_run])}")
+        end
+      end
+
+      def timings_recorder_setup
+        <<~RUBY
+          require #{TIMINGS_RECORDER_PATH.inspect}
+          CIHelper::Tools::SpecTimingsRecorder.install(#{timings_out.inspect})
+        RUBY
+      end
+
+      def example_ids
+        @example_ids ||= Dir.mktmpdir do |dir|
           output_file = File.join(dir, "rspec_examples.json")
           begin
             execute(
