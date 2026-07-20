@@ -12,12 +12,17 @@ module CIHelper
     module SpecTimingsRecorder
       def self.install(path)
         RSpec.configure do |config|
-          config.after(:suite) do
-            timings = RSpec.world.all_examples.to_h do |example|
-              [example.id, example.execution_result.run_time.to_f]
-            end
-            File.write(path, JSON.dump(timings))
-          end
+          config.after(:suite) { File.write(path, JSON.dump(SpecTimingsRecorder.collect)) }
+        end
+      end
+
+      # A node runs only the example ids it was given, but rspec loads the whole file, so
+      # all_examples also holds examples filtered out on this node; those never ran and have a
+      # nil run_time. Skip them, otherwise they land as 0.0 and can overwrite real timings on merge.
+      def self.collect
+        RSpec.world.all_examples.each_with_object({}) do |example, timings|
+          run_time = example.execution_result.run_time
+          timings[example.id] = run_time.to_f if run_time
         end
       end
     end
