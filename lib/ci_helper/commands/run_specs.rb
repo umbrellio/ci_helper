@@ -8,7 +8,7 @@ module CIHelper
   module Commands
     class RunSpecs < BaseCommand
       DEFAULT_SPLIT_THRESHOLD = 30.0
-      TIMINGS_FORMATTER_PATH = File.expand_path("../tools/rspec_timings_formatter.rb", __dir__)
+      TIMINGS_RECORDER_PATH = File.expand_path("../tools/spec_timings_recorder.rb", __dir__)
 
       def call
         return if all_spec_files.empty?
@@ -100,26 +100,25 @@ module CIHelper
       end
 
       # Runs rspec, additionally recording per-example timings when --timings-out is set.
-      # The recorder is registered through --require rather than --format so it never displaces
-      # the formatters the suite configures via .rspec (in RSpec a command-line --format replaces
-      # them), and it writes even when examples fail, since rspec still reaches its summary hook.
+      # The recorder is wired in through --require rather than --format: --format would replace
+      # the formatters the suite configures via .rspec, and even an added formatter would occupy
+      # the formatter list and suppress rspec's default progress output. It runs from an
+      # after(:suite) hook instead, so it writes even when examples fail and touches no formatter.
       def run_rspec!(specs_to_run)
         return execute("bundle exec rspec #{Shellwords.join(specs_to_run)}") unless timings_out
 
         FileUtils.mkdir_p(File.dirname(timings_out))
         Dir.mktmpdir do |dir|
-          setup = File.join(dir, "ci_helper_timings_formatter_setup.rb")
-          File.write(setup, timings_formatter_setup)
+          setup = File.join(dir, "ci_helper_timings_setup.rb")
+          File.write(setup, timings_recorder_setup)
           execute("bundle exec rspec #{Shellwords.join(["--require", setup, *specs_to_run])}")
         end
       end
 
-      def timings_formatter_setup
+      def timings_recorder_setup
         <<~RUBY
-          require #{TIMINGS_FORMATTER_PATH.inspect}
-          RSpec.configure do |config|
-            config.add_formatter(CIHelper::Tools::RSpecTimingsFormatter, #{timings_out.inspect})
-          end
+          require #{TIMINGS_RECORDER_PATH.inspect}
+          CIHelper::Tools::SpecTimingsRecorder.install(#{timings_out.inspect})
         RUBY
       end
 

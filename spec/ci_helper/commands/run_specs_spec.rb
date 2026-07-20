@@ -201,7 +201,7 @@ describe CIHelper::Commands::RunSpecs do
           timings_out: "coverage/spec_timings.2.json"
         }
       end
-      let(:setup_path) { "/tmp/ci_helper_test/ci_helper_timings_formatter_setup.rb" }
+      let(:setup_path) { "/tmp/ci_helper_test/ci_helper_timings_setup.rb" }
       let(:expected_commands) do
         [
           "export RAILS_ENV=test && bundle exec rake db:drop db:create db:migrate",
@@ -212,9 +212,8 @@ describe CIHelper::Commands::RunSpecs do
           "mv coverage/.resultset.json coverage/resultset.2.json",
         ]
       end
-      let(:formatter_registration) do
-        "config.add_formatter(CIHelper::Tools::RSpecTimingsFormatter, " \
-          "\"coverage/spec_timings.2.json\")"
+      let(:recorder_setup) do
+        "CIHelper::Tools::SpecTimingsRecorder.install(\"coverage/spec_timings.2.json\")"
       end
 
       before do
@@ -222,13 +221,13 @@ describe CIHelper::Commands::RunSpecs do
         allow(File).to receive(:write)
       end
 
-      # The recorder is added via --require (not --format), so RSpec keeps the suite's own
-      # formatters, and it writes the flat map itself even when examples fail.
-      it "records timings via an added formatter without displacing configured ones" do
+      # The recorder is wired in via --require (not --format), so RSpec keeps the suite's own
+      # formatters and default output, and it writes the flat map itself even when examples fail.
+      it "records timings via a required recorder without touching configured formatters" do
         expect(command).to eq(0)
         expect(popen_executed_commands).to eq(expected_commands)
         expect(FileUtils).to have_received(:mkdir_p).with("coverage")
-        expect(File).to have_received(:write).with(setup_path, include(formatter_registration))
+        expect(File).to have_received(:write).with(setup_path, include(recorder_setup))
       end
     end
 
