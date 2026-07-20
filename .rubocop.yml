@@ -3,7 +3,12 @@ inherit_gem:
 
 AllCops:
   DisplayCopNames: true
+  NewCops: enable
   TargetRubyVersion: 3.2
+
+Style/HashSyntax:
+  EnforcedStyle: ruby19
+  EnforcedShorthandSyntax: always
 
 Naming/MethodParameterName:
   AllowedNames: ["x", "y", "z"]

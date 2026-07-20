@@ -26,7 +26,7 @@ describe CIHelper::Commands::BundlerAudit do
   end
 
   context "with ignored advisories" do
-    let(:options) { Hash[ignored_advisories: "kek,pek"] }
+    let(:options) { { ignored_advisories: "kek,pek" } }
 
     let(:expected_command) { "bundle exec bundler-audit check --update --ignore kek pek" }
 
@@ -38,7 +38,7 @@ describe CIHelper::Commands::BundlerAudit do
   end
 
   context "with empty ignored advisories" do
-    let(:options) { Hash[ignored_advisories: ""] }
+    let(:options) { { ignored_advisories: "" } }
 
     it "executes command without ignore flag" do
       expect(command).to eq(0)

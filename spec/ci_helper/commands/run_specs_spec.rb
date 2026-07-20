@@ -9,7 +9,7 @@ describe CIHelper::Commands::RunSpecs do
 
   before { allow(Pathname).to receive(:pwd).and_return(mocked_pathname) }
 
-  let(:options) { Hash[split_resultset: "true", with_database: "true", with_clickhouse: "true"] }
+  let(:options) { { split_resultset: "true", with_database: "true", with_clickhouse: "true" } }
 
   let(:mocked_pathname) do
     instance_double(Pathname).tap do |pathname|

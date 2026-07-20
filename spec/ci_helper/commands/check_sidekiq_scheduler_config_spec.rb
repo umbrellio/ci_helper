@@ -28,7 +28,7 @@ describe CIHelper::Commands::CheckSidekiqSchedulerConfig do
     YAML
   end
 
-  let(:options) { Hash[config_path: config.path] }
+  let(:options) { { config_path: config.path } }
 
   let(:expected_commands) do
     [
@@ -42,7 +42,7 @@ describe CIHelper::Commands::CheckSidekiqSchedulerConfig do
   end
 
   context "with database" do
-    let(:options) { Hash[config_path: config.path, with_database: "true"] }
+    let(:options) { { config_path: config.path, with_database: "true" } }
 
     let(:expected_commands) do
       [

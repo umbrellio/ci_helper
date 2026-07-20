@@ -103,7 +103,7 @@ class SequelManagement
       if error.message.include?("does not exist in the filesystem")
         logger.info error.message
       else
-        raise error
+        raise
       end
     end
   end
@@ -115,7 +115,7 @@ class SequelManagement
       if error.message.include?("does not exist in the filesystem")
         logger.info error.message
       else
-        raise error
+        raise
       end
     end
   end
